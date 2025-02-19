@@ -119,10 +119,14 @@ const FlowchartApp: React.FC = () => {
         .replace(/^graph /i, 'flowchart ')
         .trim();
       
-      // Ensure it starts with flowchart TD
-      if (!code.startsWith('flowchart TD')) {
-        code = 'flowchart TD\n' + code;
+      // Ensure it starts with flowchart TD and has proper newline
+      if (!code.startsWith('flowchart TD\n')) {
+        code = code.replace(/^flowchart TD\s*/, ''); // Remove any malformed flowchart TD
+        code = `flowchart TD\n${code}`; // Add it back with proper newline
       }
+      
+      // Ensure no text immediately after flowchart TD
+      code = code.replace(/^(flowchart TD)([^\n])/, '$1\n$2');
       
       // Update messages with the assistant's response
       setMessages([
